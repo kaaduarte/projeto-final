@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Julgando o cinema</title>
+    <title>A julgadora</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         .filme { margin-bottom: 20px; }
@@ -12,13 +12,30 @@
     </style>
 </head>
 <body>
-   <h1>Julgando o cinema</h1>
+   <h1>A julgadora</h1>
    <div id="filmes-lista"></div>
    <input type="text" placeholder="Seu filme">
    <input type="text" placeholder="Gênero">
    <input type="text" placeholder="Ator/atriz">
    <input type="number" placeholder="Nota">
+   <h2>Favoritos</h2>
+   <input type="number" placeholder="Os queridinhos">
 
+   <h1>A Julgadora</h1>
+   <label for="categoria">Filtrar por Categoria:</label>
+   <select id="categoria" onchange="carregarFilmes()">
+    <option value="">Selecione uma categoria</option>
+    <option value="Ação">Ação</option>
+    <option value="Comédia">Comédia</option>
+    <option value="Drama">Drama</option>
+    <option value="Terror">Terror</option>
+    <option value="Romance">Romance</option>
+    <option value="Romance">Romance</option>
+    
+    <option value="Ficção Científica">Ficção Científica</option>
+   </select>
+
+   <div id="filmes-lista"></div>
    <script>
     //Função para exibir os filmes na página
     async function carregarfilmes() {
@@ -60,6 +77,33 @@
     }
 
     carregarfilmes(); // Carrega filmes ao inicializar a página
+    async function carregarFilmes() {
+        const categoriaSelecionada = documente.getElementById('categoria').value;
+        let url = 'http://localhost:3000/api/filmes';
+
+        if (categoriaSelecionada) {
+            //Filtra filmes pela categoria
+            url = `http://localhost:3000/api/filmes/categoria/${categoriaSelecionada}`;
+        }
+        const response = await fetch(url);
+        const filmes = await response.json();
+        const filmesLista = document.getElementById('filmes-lista');
+        filmesLista.innerHTML = '';
+
+        filmes.forEach(filme => {
+            const divFilme = document.createElement('div');
+            divFilme.classList.add('filme');
+            divFilme.innerHTML = `
+            <h3>${filme.nome} (${filme.ano})</h3>
+            <p>Gênero: ${filme.genero}</p>
+            <p>Categoria: ${filme.categoria}</p>
+            <button onclick="avaliarFilme('${filme._id}')">Avaliar</button>
+            <p><strong>Média:</strong> ${calcularMedia(filme.avaliacoes)}</p>
+            `;
+            filmesLista.appendChild(divFilme);
+        });
+        
+    }
    </script>
 </body>
 </html>

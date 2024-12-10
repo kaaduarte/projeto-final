@@ -51,8 +51,12 @@ app.get('/api/filmes/categoria/:categoria', async (req, res) => {
     const { categoria } = req.params;
     const filmes = await Filme.find({ categoria: categoria });
 
-    if (filmes.length === 0) {}
-})
+    if (filmes.length === 0) {
+        return res.status(404).send('Nenhum filme encontrado nesta categoria');
+    }
+
+    res.json(filmes);
+});
 
 // Rota para avaliar um filme
 app.post('/api/filmes/:id/avaliar', async (req, res) => {
