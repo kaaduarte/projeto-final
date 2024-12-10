@@ -12,8 +12,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
 // Conectando ao MongoDB
-mongoose.connect('mongodb+srv://programacaoduarte:Elas@2024@cluster0.7f4u2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect('mongodb+srv://programacaoduarte:Elas@2024@cluster0.7f4u2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 .then( () => console.log('Conectando ao MongoDB'))
 .catch((err) => console.log ('Erro ao conectar ao MongoDB:', err));
 
