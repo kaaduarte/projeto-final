@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 
 // Conectando ao MongoDB
-mongoose.connect('mongodb+srv://programacaoduarte:Elas@2024@cluster0.7f4u2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
 .then( () => console.log('Conectando ao MongoDB'))
 .catch((err) => console.log ('Erro ao conectar ao MongoDB:', err));
 
