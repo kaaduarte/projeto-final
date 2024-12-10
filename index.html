@@ -1,11 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documento</title>
+    <title>Julgando o cinema</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .filme { margin-bottom: 20px; }
+        .filme h3 { margin: 0; }
+        .filme button { margin-top: 10px; }
+    </style>
 </head>
 <body>
-   <p>coisa</p> 
+   <h1>Julgando o cinema</h1>
+   <div id="filmes-lista"></div>
+
+   <script>
+    //Função para exibir os filmes na página
+    async function carregarfilmes() {
+        const response = await fetch ('http://localhost:3000/api/filmes');
+        const filmes = await responde.json();
+        const filmesLista = document.getElementById('filmes-lista');
+        filmesLista.innerHTML = '';
+
+        filmes.forEach(filme => {
+            const divFilme = document.createElement('div');
+            divFilme.classList.add('filme');
+            divFilme.innerHTML = `
+            <h3>${filme.nome} (${filme.ano})</h3>
+            <p>Gênero: ${filme.genero}</p>
+            <button onclick="julgarFilme('${filme._id}')"Julgar</button>
+            <p><strong>Média:</strong> ${calcularMedia(filme.avaliacoes)}</p>
+            `;
+            filmesLista.appendChild(divFilme);
+        });
+    }
+
+    //função para julgar um filme
+    async function julgarFilme(id) {
+        const nota = prompt('Dê uma nota de 1 a 5:');
+        const comentario = prompt('Deixe um comentário:');
+
+        const response = await fetch(`http://localhost:3000/api/filmes/${id}/avaliar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nota: Number(nota), comentario })
+        });
+
+        if (response.ok) {
+            alert('Julgamento anotado!');
+            carregarFilmes(); // Recarrega a lista de filmes
+        } else {
+            alert('Erro ao registrar avaliação');
+        }   
+    }
+
+    carregarfilmes(); // Carrega filmes ao inicializar a página
+   </script>
 </body>
 </html>

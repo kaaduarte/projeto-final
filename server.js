@@ -18,12 +18,16 @@ mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px
 .then( () => console.log('Conectando ao MongoDB'))
 .catch((err) => console.log ('Erro ao conectar ao MongoDB:', err));
 
-// Modelo de Filme
+// Modelo de Filme atualizado com categoria
 const filmesSchema = new mongoose.Schema({
     nome: String,
     ano: Number,
-    genero: String,
-    avaliacoes: [{ nota: Number, comentario: String}]
+    genero: String,  //gênero como campo existente
+    categoria: String, // Nova categoria
+    avaliacoes: [{ 
+        nota: Number, 
+        comentario: String
+    }]
 });
 
 const Filme = mongoose.model('Filme', filmesSchema);
@@ -41,6 +45,11 @@ app.get('/api/filmes', async (req, res) => {
 
     res.status(201).json(filme);
 });
+
+// Rota para obter filmes filtrados por categoria
+app.get('/api/filmes/categoria/:categoria', async (req, res) => {
+    
+})
 
 // Rota para avaliar um filme
 app.post('/api/filmes/:id/avaliar', async (req, res) => {
