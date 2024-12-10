@@ -48,7 +48,10 @@ app.get('/api/filmes', async (req, res) => {
 
 // Rota para obter filmes filtrados por categoria
 app.get('/api/filmes/categoria/:categoria', async (req, res) => {
-    
+    const { categoria } = req.params;
+    const filmes = await Filme.find({ categoria: categoria });
+
+    if (filmes.length === 0) {}
 })
 
 // Rota para avaliar um filme
