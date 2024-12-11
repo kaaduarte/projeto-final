@@ -2,11 +2,14 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { listenerCount } = require('process');
-
 const app = express();
+
+//
 
 // MiddLeware
 app.use(cors());
@@ -21,7 +24,7 @@ mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px
 app.post('/api/filmes', async (req, res) => {
     const { nome, genero, ano, julgamentos } = req.body; // Recebe os dados do filme
 
-    // Cria u novo objeto filme com os dados fornecidos
+    // Cria um novo objeto filme com os dados fornecidos
     const filme = new Filme({
         nome,
         genero,
@@ -43,6 +46,7 @@ const filmesSchema = new mongoose.Schema({
     nome: { type: String, required: true },
     ano: { type: Number, required: true },
     genero: { type: String, required: true },  //gênero como campo existente
+    imagem: { type: String }, // Novo campo para armazenar a URL da imagem
     julgamentos: [{
         nota: { type: Number, min: 0, x: 5 },
         comentario: { type: String }
