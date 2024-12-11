@@ -9,12 +9,81 @@ const bodyParser = require('body-parser');
 const { listenerCount } = require('process');
 const app = express();
 
-//
+// configuração do multer para salvar as imagens no servidor
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Pasta onde as imagens serão salvas
+    },
+    filename: (req, file, cb) => {
+        cb(null, 'uploads/'); // Pasta onde as imagens serão salvas
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Nome único para cada arquivo
+    }
+});
+
+const upload = multer({ storage: storage});
+
+// Middleware para parsear JSON e permitir uploads
+app.use(express.json());
+app.use(express.static('uploads'));  // Torna a pasta 'uploads' pública para acessar as imagens
+
+// Rota para adicionar um filme com a imagem
+app.post('/api/filmes', upload.single('imagem'), async (req, res) => {
+  const { nome, genero, ano } = req.body;
+  const imagemUrl = req.file ? `/uploads/${req.file.filename}` : null;  // URL da imagem salva
+
+  const filme = new Filme({
+    nome,
+    genero,
+    ano,
+    imagem: imagemUrl,
+    avaliacoes: []
+  });
+
+  try {
+    await filme.save();
+    res.status(201).json(filme);
+  } catch (error) {
+    res.status(400).json({ error: 'Erro ao adicionar filme' });
+  }
+});
 
 // MiddLeware
 app.use(cors());
 app.use(bodyParser.json());
 
+// Função para carregar os filmes e exibir as imagens
+async function carregarFilmes() {
+    const response = await fetch('http://localhost:3000/api/filmes');
+    const filmes = await response.json();
+    const filmesLista = document.getElementById('filmes-lista');
+    filmesLista.innerHTML = '';
+  
+    filmes.forEach(filme => {
+      const divFilme = document.createElement('div');
+      divFilme.classList.add('filme');
+      
+      divFilme.innerHTML = `
+        <h3>${filme.nome} (${filme.ano})</h3>
+        <p>Gênero: ${filme.genero}</p>
+        <p><strong>Média:</strong> ${calcularMedia(filme.avaliacoes)}</p>
+        ${filme.imagem ? `<img src="${filme.imagem}" alt="${filme.nome}" width="200" />` : ''}
+        <button onclick="avaliarFilme('${filme._id}')">Avaliar</button>
+      `;
+      
+      filmesLista.appendChild(divFilme);
+    });
+  }
+  
+  // Função para calcular a média de avaliações
+  function calcularMedia(avaliacoes) {
+    const total = avaliacoes.reduce((acc, curr) => acc + curr.nota, 0);
+    return (total / avaliacoes.length).toFixed(1);
+  }
+  
+  carregarFilmes();
+      
 
 // Conectando ao MongoDB
 mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
