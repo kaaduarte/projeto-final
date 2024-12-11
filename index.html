@@ -13,49 +13,144 @@
 </head>
 <body>
    <h1>A julgadora</h1>
+   <h2>Adicionar Filme</h2>
    <div id="filmes-lista"></div>
-   <input type="text" placeholder="Seu filme">
-   <input type="text" placeholder="Gênero">
-   <input type="text" placeholder="Ator/atriz">
-   <input type="number" placeholder="Nota">
-   <h2>Favoritos</h2>
-   <input type="number" placeholder="Os queridinhos">
+   <form id="form-adicionar-filme">
+    <label for="nome">Nome do Filme:</label>
+    <input type="text" id="nome" required><br>
 
-   <h1>A Julgadora</h1>
-   <label for="categoria">Filtrar por Categoria:</label>
-   <select id="categoria" onchange="carregarFilmes()">
-    <option value="">Selecione uma categoria</option>
+    <label for="genero">Gênero:</label>
+    <input type="text" id="genero" required><br>
+
+    <label for="ano">Ano:</label>
+    <input type="number" id="ano" required><br>
+
+    <label for="nota">Julgamento (0-5)</label>
+    <input type="number" id="nota" min="0" max="5" step="0.1" required><br>
+
+    <button type="submit">Adicionar Filme</button>
+
+   </form>
+
+   <div id="mensagem"></div>
+   
+   
+   <h1>Busque os julgamentos</h1>
+   <label for="genero">Busque por Gênero:</label>
+   <select id="genero" onchange="filtrarFilmes()">
+    <option value="">Selecione um gênero</option>
     <option value="Ação">Ação</option>
     <option value="Comédia">Comédia</option>
     <option value="Drama">Drama</option>
+    <option value="Ficcao Cientifica">Ficção Científica</option>
+    <option value="Romance">Romance</option>
+    <option value="Suspense">Suspense</option>
     <option value="Terror">Terror</option>
-    <option value="Romance">Romance</option>
-    <option value="Romance">Romance</option>
-    
-    <option value="Ficção Científica">Ficção Científica</option>
    </select>
 
+   <label for="mediaMin">Busque aqui por notas de julgamentos:</label>
+   <input type="number" id="mediaMin" placeholder="Ex: 4.0" onchange="filtrarFilmesPorMedia()" min="0" max="5" step="0.1">
+
+
    <div id="filmes-lista"></div>
+   <h2>Favoritos</h2>
+   <input type="number" placeholder="Os queridinhos">
    <script>
+
+    // Função para adicionar um filme
+    async function  adicionarFilme(event) {
+        event.preventDefault(); // Previne o comportamento padrão de envio do formulário
+
+        // Coleta os dados do formulário
+        const nome = document.getElementById('nome').value;
+        const genero = document.getElementById('genero').value;
+        const ano = document.getElementById('ano').value;
+        const nota = document.getElementById('nota').value;
+
+        // Cria o objeto com os dados do filme
+        const novoFilme = {
+            nome,
+            genero,
+            ano,
+            julgamento: {
+                nota: parseFloat(nota),
+                comentario: ''
+            }
+        };
+
+        try {
+            // Envia os dados para o API do back-end
+            const response = await fetch('/api/filmes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(novoFilme)
+            });
+
+            // Verifica se a resposta foi bem sucedida
+            if (response.ok) {
+                const filme = await response.json();
+                document.getElementById('mensagem').innerHTML = `<p>Filme adicionado com sucesso: ${filme.nome}</p>`;
+            } else {
+                const erro = await response.json();
+                document.getElementById('mensagem').innerHTML = `<p> Erro ao adicionar filme: ${erro.error}</p>`;  
+            }
+        } catch (error) {
+            document.getElementById('mensagem').innerHTML = `<p> Erro na requisição: ${error}</p>`;
+        }
+    }
+
+    // Adiciona o evento de envio do formulário
+    document.getElementById('form-adicionar-filme').addEventListener('submit', adicionarFilme);
+
+
     //Função para exibir os filmes na página
-    async function carregarfilmes() {
-        const response = await fetch ('http://localhost:3000/api/filmes');
+    async function carregarfilmes(filtroGenero = '') {
+        const url = filtroGenero ? `/api/filmes?genero=${filtroGenero}`: '/api/filmes';
+        const response = await fetch (url);
         const filmes = await responde.json();
+        exibirFilmes(filmes);
+    }
+
+    function exibirFilmes(filmes) {
         const filmesLista = document.getElementById('filmes-lista');
         filmesLista.innerHTML = '';
-
         filmes.forEach(filme => {
             const divFilme = document.createElement('div');
             divFilme.classList.add('filme');
             divFilme.innerHTML = `
             <h3>${filme.nome} (${filme.ano})</h3>
             <p>Gênero: ${filme.genero}</p>
-            <button onclick="julgarFilme('${filme._id}')"Julgar</button>
-            <p><strong>Média:</strong> ${calcularMedia(filme.avaliacoes)}</p>
+            <button onclick="avaliarFilme('${filme._id}')">Avaliar</button>
+            <p><strong>Média:</strong> %{calcularMedia(filme.julgamentos)}</p>
             `;
             filmesLista.appendChild(divFilme);
         });
     }
+
+
+    // Função para calcular média de julgamentos
+    function calcularMedia(julgamentos) {
+        if (julgamentos.length === 0) return 'Sem julgamentos';
+        const total = julgamentos.reduce( (acc, a) => acc + a.nota, 0);
+        return (total / julgamentos.length).toFixed(1);
+    }
+
+    async function filtrarFilmes() {
+        const genero = document.getElementById('genero').value;
+        const mediaMin = document.getElementById('mediaMin').value;
+        await carregarFilmes(genero, mediaMin); // Passa o gênero e a média mínima para o back-end
+        
+    }
+
+    async function carregarFilmes(genero = '', mediaMin = '') {
+        const url = `/api/filmes?genero=${genero}&mediaMin=${mediaMin}`;
+        const response = await fetch(url);
+        const filmes = await response.json();
+        exibirFilmes(filmes);
+        
+    } 
 
     //função para julgar um filme
     async function julgarFilme(id) {
@@ -72,37 +167,8 @@
             alert('Julgamento anotado!');
             carregarFilmes(); // Recarrega a lista de filmes
         } else {
-            alert('Erro ao registrar avaliação');
+            alert('Erro ao registrar julgamento');
         }   
-    }
-
-    carregarfilmes(); // Carrega filmes ao inicializar a página
-    async function carregarFilmes() {
-        const categoriaSelecionada = documente.getElementById('categoria').value;
-        let url = 'http://localhost:3000/api/filmes';
-
-        if (categoriaSelecionada) {
-            //Filtra filmes pela categoria
-            url = `http://localhost:3000/api/filmes/categoria/${categoriaSelecionada}`;
-        }
-        const response = await fetch(url);
-        const filmes = await response.json();
-        const filmesLista = document.getElementById('filmes-lista');
-        filmesLista.innerHTML = '';
-
-        filmes.forEach(filme => {
-            const divFilme = document.createElement('div');
-            divFilme.classList.add('filme');
-            divFilme.innerHTML = `
-            <h3>${filme.nome} (${filme.ano})</h3>
-            <p>Gênero: ${filme.genero}</p>
-            <p>Categoria: ${filme.categoria}</p>
-            <button onclick="avaliarFilme('${filme._id}')">Avaliar</button>
-            <p><strong>Média:</strong> ${calcularMedia(filme.avaliacoes)}</p>
-            `;
-            filmesLista.appendChild(divFilme);
-        });
-        
     }
    </script>
 </body>
