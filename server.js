@@ -20,14 +20,10 @@ mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px
 
 // Modelo de Filme atualizado com categoria
 const filmesSchema = new mongoose.Schema({
-    nome: String,
-    ano: Number,
-    genero: String,  //gênero como campo existente
-    categoria: String, // Nova categoria
-    avaliacoes: [{ 
-        nota: Number, 
-        comentario: String
-    }]
+    nome: { type: String, required: true },
+    ano: { type: Number, required: true },
+    genero: { type: String, required: true },  //gênero como campo existente
+    avaliacoes: [avaliacaoSchema], // Lista de avaliações
 });
 
 const Filme = mongoose.model('Filme', filmesSchema);
@@ -46,13 +42,13 @@ app.get('/api/filmes', async (req, res) => {
     res.status(201).json(filme);
 });
 
-// Rota para obter filmes filtrados por categoria
-app.get('/api/filmes/categoria/:categoria', async (req, res) => {
-    const { categoria } = req.params;
-    const filmes = await Filme.find({ categoria: categoria });
+// Rota para obter filmes filtrados por gênero
+app.get('/api/filmes/genero/:genero', async (req, res) => {
+    const { genero } = req.params;
+    const filmes = await Filme.find({ genero: genero });
 
     if (filmes.length === 0) {
-        return res.status(404).send('Nenhum filme encontrado nesta categoria');
+        return res.status(404).send('Nenhum filme encontrado neste gênero');
     }
 
     res.json(filmes);
