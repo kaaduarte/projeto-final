@@ -9,6 +9,15 @@ const bodyParser = require('body-parser');
 const { listenerCount } = require('process');
 const app = express();
 
+// Conectando ao MongoDB
+mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
+.then( () => console.log('Conectando ao MongoDB'))
+.catch((err) => console.log ('Erro ao conectar ao MongoDB:', err));
+
+// MiddLeware
+app.use(cors());
+app.use(bodyParser.json());
+
 // configuração do multer para salvar as imagens no servidor
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -49,9 +58,43 @@ app.post('/api/filmes', upload.single('imagem'), async (req, res) => {
   }
 });
 
-// MiddLeware
-app.use(cors());
-app.use(bodyParser.json());
+async function adicionarFilme(event) { 
+  event.preventDefault();  // Previne o comportamento padrão de envio do formulário
+
+  // Coleta os dados do formulário
+  const nome = document.getElementById('nome').value;
+  const genero = document.getElementById('genero').value;
+  const ano = document.getElementById('ano').value;
+  const nota = document.getElementById('nota').value;
+  const imagem = document.getElementById('imagem').files[0];  // Coleta a imagem do filme
+
+  // Cria um objeto FormData para enviar os dados, incluindo a imagem
+  const formData = new FormData();
+  formData.append('nome', nome);
+  formData.append('genero', genero);
+  formData.append('ano', ano);
+  formData.append('nota', nota);
+  formData.append('imagem', imagem);  // Adiciona a imagem ao FormData
+
+  try {
+      // Envia os dados para a API do back-end
+      const response = await fetch('/api/filmes', {
+          method: 'POST',
+          body: formData  // Envia o FormData com todos os dados
+      });
+
+      // Verifica se a resposta foi bem-sucedida
+      if (response.ok) {
+          const filme = await response.json();
+          document.getElementById('mensagem').innerHTML = `<p>Filme adicionado com sucesso: ${filme.nome}</p>`;
+      } else {
+          const erro = await response.json();
+          document.getElementById('mensagem').innerHTML = `<p>Erro ao adicionar filme: ${erro.error}</p>`;
+      }
+  } catch (error) {
+      document.getElementById('mensagem').innerHTML = `<p>Erro na requisição: ${error}</p>`;
+  }
+}
 
 // Função para carregar os filmes e exibir as imagens
 async function carregarFilmes() {
@@ -83,13 +126,7 @@ async function carregarFilmes() {
   }
   
   carregarFilmes();
-      
-
-// Conectando ao MongoDB
-mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
-.then( () => console.log('Conectando ao MongoDB'))
-.catch((err) => console.log ('Erro ao conectar ao MongoDB:', err));
-
+        
 app.post('/api/filmes', async (req, res) => {
     const { nome, genero, ano, julgamentos } = req.body; // Recebe os dados do filme
 
@@ -185,4 +222,9 @@ app.get('/api/filmes/:id/julgamentos', async (req, res) => {
 const PORT = 3000
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
+
+
+ document.getElementById('form-adicionar-filme').addEventListener('submit', adicionarFilme);
+
+
 });

@@ -13,53 +13,49 @@
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-   <h1>A julgadora</h1>
-
-   <h2>Adicionar Filme</h2>
-   <div id="filmes-lista"></div>
-   <form id="form-adicionar-filme" enctype="multipart/form-data">
-    <label for="nome">Nome do Filme:</label>
-    <input type="text" id="nome" required><br>
-
-    <label for="genero">Gênero:</label>
-    <input type="text" id="genero" required><br>
-
-    <label for="ano">Ano:</label>
-    <input type="number" id="ano" required><br>
-
-    <label for="nota">Julgamento (0-5)</label>
-    <input type="number" id="nota" min="0" max="5" step="0.1" required><br>
-
-    <label for="imagem">Imagem do Filme:</label>
-    <input type="file" id="imagem" accept="image/*" required><br>
-
-    <button type="submit">Adicionar Filme</button>
-
-   </form>
-
-   <div id="mensagem"></div>
-   
-   
-   <h1>Busque os julgamentos</h1>
-   <label for="genero">Busque por Gênero:</label>
-   <select id="genero" onchange="filtrarFilmes()">
-    <option value="">Selecione um gênero</option>
-    <option value="Ação">Ação</option>
-    <option value="Comédia">Comédia</option>
-    <option value="Drama">Drama</option>
-    <option value="Ficcao Cientifica">Ficção Científica</option>
-    <option value="Romance">Romance</option>
-    <option value="Suspense">Suspense</option>
-    <option value="Terror">Terror</option>
-   </select>
-
-   <label for="mediaMin">Busque aqui por notas de julgamentos:</label>
-   <input type="number" id="mediaMin" placeholder="Ex: 4.0" onchange="filtrarFilmesPorMedia()" min="0" max="5" step="0.1">
-
-
-   <div id="filmes-lista"></div>
-   <h2>Favoritos</h2>
-   <input type="number" placeholder="Os queridinhos">
+    <body>
+        <div class="sidebar">
+          <h1>A Julgadora</h1>
+          <a href="#adicionar-filme">Adicionar Filme</a>
+          <a href="#buscar-filmes">Buscar Filmes</a>
+          <a href="#favoritos">Favoritos</a>
+        </div>
+        <div class="main-content">
+          <h2 id="adicionar-filme">Adicionar Filme</h2>
+          <form id="form-adicionar-filme" enctype="multipart/form-data">
+            <label for="nome">Nome do Filme:</label>
+            <input type="text" id="nome" required>
+            <label for="genero">Gênero:</label>
+            <input type="text" id="genero" required>
+            <label for="ano">Ano:</label>
+            <input type="number" id="ano" required>
+            <label for="nota">Julgamento (0-5):</label>
+            <input type="number" id="nota" min="0" max="5" step="0.1" required>
+            <label for="imagem">Imagem do Filme:</label>
+            <input type="file" id="imagem" accept="image/*" required>
+            <button type="submit">Adicionar Filme</button>
+          </form>
+      
+          <h2 id="buscar-filmes">Busque os Julgamentos</h2>
+          <label for="genero">Busque por Gênero:</label>
+          <select id="genero" onchange="filtrarFilmes()">
+            <option value="">Selecione um gênero</option>
+            <option value="Ação">Ação</option>
+            <option value="Comédia">Comédia</option>
+            <option value="Drama">Drama</option>
+            <option value="Ficção Científica">Ficção Científica</option>
+            <option value="Romance">Romance</option>
+            <option value="Suspense">Suspense</option>
+            <option value="Terror">Terror</option>
+          </select>
+          <label for="mediaMin">Busque por notas de julgamentos:</label>
+          <input type="number" id="mediaMin" placeholder="Ex: 4.0" onchange="filtrarFilmesPorMedia()" min="0" max="5" step="0.1">
+          <div id="filmes-lista"></div>
+          <h2 id="favoritos">Favoritos</h2>
+          <input type="number" placeholder="Os queridinhos">
+        </div>
+      </body>
+      
    <script>
 
     // Função para adicionar um filme
