@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
@@ -8,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { listenerCount } = require('process');
 const app = express();
+app.use(express.json());  // Para que o Express entenda o JSON no corpo da requisição
 
 // Conectando ao MongoDB
 mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
@@ -107,14 +106,14 @@ async function carregarFilmes() {
   carregarFilmes();
 
 app.post('/api/filmes', async (req, res) => {
-    const { nome, genero, ano, julgamentos } = req.body; // Recebe os dados do filme
+    const { nome, genero, ano, julgamento } = req.body; // Recebe os dados do filme
 
     // Cria um novo objeto filme com os dados fornecidos
     const filme = new Filme({
         nome,
         genero,
         ano,
-        julgamentos: [julgamento] // Inicializa com o julgamento que você recebe 
+        julgamento: [julgamento] // Inicializa com o julgamento que você recebe 
     });
 
     try {
@@ -187,13 +186,13 @@ app.post('/api/filmes/:id/julgar', async (req, res) => {
 });
 
 // Rota para calcular a média das julgamentos
-app.get('/api/filmes/:id/julgamentos', async (req, res) => {
+app.get('/api/filmes/:id/julgamento', async (req, res) => {
     const { id } = req.params;
 
     const filme = await Filme.findById(id);
     if (!filme) return res.status(404).send('Filme não encontrado');
 
-    const media = filme.julgamentos.reduce((acc, curr) => acc + curr.nota, 0) /filme.julgamentos.length;
+    const media = filme.julgamento.reduce((acc, curr) => acc + curr.nota, 0) /filme.julgamento.length;
     res.json({ media });
 });
 
