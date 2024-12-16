@@ -58,42 +58,21 @@ app.post('/api/filmes', upload.single('imagem'), async (req, res) => {
   }
 });
 
-async function adicionarFilme(event) { 
-  event.preventDefault();  // Previne o comportamento padrão de envio do formulário
+// corrigindo erro JSON
 
-  // Coleta os dados do formulário
-  const nome = document.getElementById('nome').value;
-  const genero = document.getElementById('genero').value;
-  const ano = document.getElementById('ano').value;
-  const nota = document.getElementById('nota').value;
-  const imagem = document.getElementById('imagem').files[0];  // Coleta a imagem do filme
-
-  // Cria um objeto FormData para enviar os dados, incluindo a imagem
-  const formData = new FormData();
-  formData.append('nome', nome);
-  formData.append('genero', genero);
-  formData.append('ano', ano);
-  formData.append('nota', nota);
-  formData.append('imagem', imagem);  // Adiciona a imagem ao FormData
-
+if (response.ok) {
   try {
-      // Envia os dados para a API do back-end
-      const response = await fetch('/api/filmes', {
-          method: 'POST',
-          body: formData  // Envia o FormData com todos os dados
-      });
-
-      // Verifica se a resposta foi bem-sucedida
-      if (response.ok) {
-          const filme = await response.json();
-          document.getElementById('mensagem').innerHTML = `<p>Filme adicionado com sucesso: ${filme.nome}</p>`;
-      } else {
-          const erro = await response.json();
-          document.getElementById('mensagem').innerHTML = `<p>Erro ao adicionar filme: ${erro.error}</p>`;
-      }
+      const filme = await response.json();
+      console.log("Filme adicionado com sucesso:", filme);
+      document.getElementById('mensagem').innerHTML = `<p>Filme adicionado com sucesso: ${filme.nome}</p>`;
   } catch (error) {
-      document.getElementById('mensagem').innerHTML = `<p>Erro na requisição: ${error}</p>`;
+      console.error("Erro ao parsear a resposta JSON:", error);
+      document.getElementById('mensagem').innerHTML = `<p>Erro ao interpretar a resposta do servidor.</p>`;
   }
+} else {
+  const erro = await response.text();  // Usando text() para capturar resposta não JSON
+  console.error("Erro ao adicionar filme:", erro);
+  document.getElementById('mensagem').innerHTML = `<p>Erro ao adicionar filme: ${erro}</p>`;
 }
 
 // Função para carregar os filmes e exibir as imagens
@@ -126,7 +105,7 @@ async function carregarFilmes() {
   }
   
   carregarFilmes();
-        
+
 app.post('/api/filmes', async (req, res) => {
     const { nome, genero, ano, julgamentos } = req.body; // Recebe os dados do filme
 
