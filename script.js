@@ -48,15 +48,6 @@ async function adicionarFilme(event) {
 // Adiciona o evento de envio do formulário
 document.getElementById('form-adicionar-filme').addEventListener('submit', adicionarFilme);
 
-
-//Função para exibir os filmes na página
-async function carregarfilmes(filtroGenero = '') {
-    const url = filtroGenero ? `/api/filmes?genero=${filtroGenero}` : '/api/filmes';
-    const response = await fetch(url);
-    const filmes = await responde.json();
-    exibirFilmes(filmes);
-}
-
 function exibirFilmes(filmes) {
     const filmesLista = document.getElementById('filmes-lista');
     filmesLista.innerHTML = '';
@@ -67,17 +58,17 @@ function exibirFilmes(filmes) {
                 <h3>${filme.nome} (${filme.ano})</h3>
                 <p>Gênero: ${filme.genero}</p>
                 <button onclick="avaliarFilme('${filme._id}')">Avaliar</button>
-                <p><strong>Média:</strong> %{calcularMedia(filme.julgamentos)}</p>
+                <p><strong>Média:</strong> %{calcularMedia(filme.julgamento)}</p>
                 `;
         filmesLista.appendChild(divFilme);
     });
 }
 
-// Função para calcular média de julgamentos
-function calcularMedia(julgamentos) {
-    if (julgamentos.length === 0) return 'Sem julgamentos';
-    const total = julgamentos.reduce((acc, a) => acc + a.nota, 0);
-    return (total / julgamentos.length).toFixed(1);
+// Função para calcular média de julgamento
+function calcularMedia(julgamento) {
+    if (julgamento.length === 0) return 'Sem julgamento';
+    const total = julgamento.reduce((acc, a) => acc + a.nota, 0);
+    return (total / julgamento.length).toFixed(1);
 }
 
 async function filtrarFilmes() {
