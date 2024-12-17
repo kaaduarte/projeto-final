@@ -1,9 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const path = require('path');
 const cors = require('cors');
 const app = express();
+const fs = require('fs');
+const path = require('path');
+
+// Verifica se a pasta 'uploads' existe, caso contrário, cria a pasta
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+  console.log('Pasta uploads criada!');
+} else {
+  console.log('Pasta uploads já existe.');
+}
 
 // Conexão com MongoDB
 mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
