@@ -1,4 +1,3 @@
-
 // Função para adicionar um filme
 async function adicionarFilme(event) {
     event.preventDefault();  // Previne o comportamento padrão de envio do formulário
@@ -57,8 +56,8 @@ function exibirFilmes(filmes) {
         divFilme.innerHTML = `
                 <h3>${filme.nome} (${filme.ano})</h3>
                 <p>Gênero: ${filme.genero}</p>
-                <button onclick="avaliarFilme('${filme._id}')">Avaliar</button>
-                <p><strong>Média:</strong> %{calcularMedia(filme.julgamento)}</p>
+                <button onclick="julgarFilme('${filme._id}')">Julgar</button>
+                <p><strong>Média:</strong> ${calcularMedia(filme.julgamentos)}</p>
                 `;
         filmesLista.appendChild(divFilme);
     });
@@ -91,7 +90,7 @@ async function julgarFilme(id) {
     const nota = prompt('Dê uma nota de 1 a 5:');
     const comentario = prompt('Deixe um comentário:');
 
-    const response = await fetch(`http://localhost:3000/api/filmes/${id}/avaliar`, {
+    const response = await fetch(`http://localhost:3000/api/filmes/${id}/julgar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nota: Number(nota), comentario })
