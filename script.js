@@ -9,22 +9,26 @@ async function adicionarFilme(event) {
     const genero = document.getElementById('genero').value;
     const ano = document.getElementById('ano').value;
     const nota = document.getElementById('nota').value;
-    const imagem = document.getElementById('imagem').files[0];
+    const imagem = document.getElementById('imagem').value; // Agora é uma URL, não um arquivo
 
     console.log({ nome, genero, ano, nota, imagem }); // Verifica os valores coletados
 
-    // Cria um objeto FormData para enviar os dados, incluindo a imagem
-    const formData = new FormData();
-    formData.append('nome', nome);
-    formData.append('genero', genero);
-    formData.append('ano', ano);
-    formData.append('nota', nota);
-    formData.append('imagem', imagem);
+    // Cria um objeto com os dados
+    const filmeData = {
+        nome,
+        genero,
+        ano,
+        nota,
+        imagem  // A URL da imagem é agora um campo do tipo string
+    };
 
-    try {
+     try {
         const response = await fetch('/api/filmes', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json' // Envia os dados como JSON
+            },
+            body: JSON.stringify(filmeData) // Envia os dados convertidos para JSON
         });
 
         console.log("Resposta do servidor:", response);
@@ -56,6 +60,7 @@ function exibirFilmes(filmes) {
         divFilme.innerHTML = `
                 <h3>${filme.nome} (${filme.ano})</h3>
                 <p>Gênero: ${filme.genero}</p>
+                ${filme.imagem ? `<img src="${filme.imagem}" alt="${filme.nome}" width="200" />` : ''}
                 <button onclick="julgarFilme('${filme._id}')">Julgar</button>
                 <p><strong>Média:</strong> ${calcularMedia(filme.julgamentos)}</p>
                 `;
@@ -74,7 +79,6 @@ async function filtrarFilmes() {
     const genero = document.getElementById('genero').value;
     const mediaMin = document.getElementById('mediaMin').value;
     await carregarFilmes(genero, mediaMin); // Passa o gênero e a média mínima para o back-end
-
 }
 
 async function carregarFilmes(genero = '', mediaMin = '') {
@@ -82,10 +86,9 @@ async function carregarFilmes(genero = '', mediaMin = '') {
     const response = await fetch(url);
     const filmes = await response.json();
     exibirFilmes(filmes);
-
 }
 
-//função para julgar um filme
+// Função para julgar um filme
 async function julgarFilme(id) {
     const nota = prompt('Dê uma nota de 1 a 5:');
     const comentario = prompt('Deixe um comentário:');
