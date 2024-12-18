@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A julgadora</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
+
 <body>
+     <!-- Mensagem para exibir o resultado -->
+    <div id="mensagem"></div>
+
+
     <div class="sidebar">
         <h1>A Julgadora</h1>
         <a href="#adicionar-filme">Adicionar Filme</a>
@@ -15,7 +21,7 @@
     </div>
     <div class="main-content">
         <h2 id="adicionar-filme">Adicionar Filme</h2>
-        <form id="form-adicionar-filme">
+        <form id="formFilme" onsubmit="adicionarFilme(event)">
             <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" required>
         
@@ -26,13 +32,18 @@
             <input type="number" id="ano" name="ano" required>
         
             <label for="nota">Nota:</label>
-            <input type="number" id="nota" name="nota" required>
+            <input type="number" id="nota" name="nota" min="1" max="5" required>
         
             <label for="imagem">Imagem (URL):</label>
             <input type="text" id="imagem" name="imagem">
         
+            <label for="comentario">Comentário:</label>
+            <textarea id="comentario" name="comentario"></textarea>
+        
             <button type="submit">Adicionar Filme</button>
-        </form>        
+        </form>
+        
+        <div id="mensagem"></div>
         
         <h2 id="buscar-filmes">Busque os Julgamentos</h2>
         <label for="genero-busca">Busque por Gênero:</label>
@@ -47,11 +58,13 @@
             <option value="Terror">Terror</option>
         </select>
         <label for="mediaMin">Busque por notas de julgamento:</label>
-        <input type="number" id="mediaMin" placeholder="Ex: 4.0" onchange="filtrarFilmesPorMedia()" min="0" max="5" step="0.1">
+        <input type="number" id="mediaMin" placeholder="Ex: 4.0" onchange="filtrarFilmesPorMedia()" min="0" max="5"
+            step="0.1">
         <div id="filmes-lista"></div>
     </div>
     <div id="mensagem"></div>
-    
+
     <script src="script.js"></script>
 </body>
+
 </html>

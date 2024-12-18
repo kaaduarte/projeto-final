@@ -1,15 +1,16 @@
 // Middleware
-app.use(cors());
-app.use(express.json()); // Para fazer o parse do corpo da requisição
-
 const express = require('express');
-const mongoose = require('mongoose');
+const cors = require('cors');  // Importa o CORS
 const app = express();
+const mongoose = require('mongoose');
+app.use(cors());
 app.use(cors({
   origin: '*', // Permite requisições de qualquer origem (ajuste conforme necessário)
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type']
 }));
+app.use(express.json()); // Para fazer o parse do corpo da requisição
+
 
 // Conexão com MongoDB
 mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')

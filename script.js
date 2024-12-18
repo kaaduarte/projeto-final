@@ -1,28 +1,32 @@
 
 const API_BASE_URL = 'http://localhost:3000';
 
+
+// Função para adicionar um filme
 // Função para adicionar um filme
 async function adicionarFilme(event) {
-    event.preventDefault();
+    event.preventDefault(); // Impede o envio padrão do formulário
 
     console.log("Função adicionarFilme foi chamada!");
 
-    const nome = document.getElementById('nome')?.value || '';
-    const genero = document.getElementById('genero')?.value || '';
-    const ano = document.getElementById('ano')?.value || '';
-    const nota = document.getElementById('nota')?.value || '';
-    const imagem = document.getElementById('imagem')?.value || '';
+    const nome = document.getElementById('nome').value;
+    const genero = document.getElementById('genero').value;
+    const ano = document.getElementById('ano').value;
+    const nota = document.getElementById('nota').value;
+    const imagem = document.getElementById('imagem').value;
+    const comentario = document.getElementById('comentario').value;
 
+    // Validação simples para garantir que os campos obrigatórios foram preenchidos
     if (!nome || !genero || !ano || !nota) {
-        console.error("Erro: Um ou mais campos estão vazios!");
+        console.error("Erro: Um ou mais campos obrigatórios estão vazios!");
         document.getElementById('mensagem').innerHTML = `<p>Erro: Preencha todos os campos obrigatórios!</p>`;
         return;
     }
 
-    const filmeData = { nome, genero, ano, nota, imagem };
+    const filmeData = { nome, genero, ano, nota, imagem, comentario };
 
     try {
-        const response = await fetch('/api/filmes', {
+        const response = await fetch('http://localhost:3000/api/filmes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(filmeData),
