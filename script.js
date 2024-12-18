@@ -1,3 +1,6 @@
+
+const API_BASE_URL = 'http://localhost:3000';
+
 // Função para adicionar um filme
 async function adicionarFilme(event) {
     event.preventDefault();  // Previne o comportamento padrão de envio do formulário
@@ -22,7 +25,7 @@ async function adicionarFilme(event) {
         imagem  // A URL da imagem é agora um campo do tipo string
     };
 
-     try {
+    try {
         const response = await fetch('/api/filmes', {
             method: 'POST',
             headers: {
@@ -70,7 +73,7 @@ function exibirFilmes(filmes) {
 
 // Função para calcular média de julgamento
 function calcularMedia(julgamento) {
-    if (julgamento.length === 0) return 'Sem julgamento';
+    if (!Array.isArray(julgamento) || julgamento.length === 0) return 'Sem julgamento';
     const total = julgamento.reduce((acc, a) => acc + a.nota, 0);
     return (total / julgamento.length).toFixed(1);
 }
