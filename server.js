@@ -1,17 +1,20 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const app = express();
-
-// Conexão com MongoDB
-mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
-  .then(() => console.log('Conectado ao MongoDB'))
-  .catch((err) => console.log('Erro ao conectar ao MongoDB:', err));
-
 // Middleware
 app.use(cors());
 app.use(express.json()); // Para fazer o parse do corpo da requisição
 
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+app.use(cors({
+  origin: '*', // Permite requisições de qualquer origem (ajuste conforme necessário)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
+
+// Conexão com MongoDB
+mongoose.connect('mongodb+srv://programacaoduarte:5kaSjFvlvYrKoTuw@cluster1.n3px2.mongodb.net/')
+    .then(() => console.log('Conectado ao MongoDB'))
+    .catch((err) => console.error('Erro ao conectar ao MongoDB:', err));
 
 // Modelo Filme
 const filmesSchema = new mongoose.Schema({
@@ -30,17 +33,31 @@ const Filme = mongoose.model('Filme', filmesSchema);
 
 // Rota POST: Adicionar um filme (agora sem o upload de imagem)
 app.post('/api/filmes', async (req, res) => {
-  const { nome, genero, ano, imagem, comentario } = req.body; // Agora esperamos que a imagem seja uma URL
+  console.log('Recebendo requisição POST para /api/filmes');
+  console.log('Dados recebidos:', req.body);
 
-  const filme = new Filme({ nome, genero, ano, imagem, comentario, julgamentos: [] });
+  const { nome, genero, ano, imagem, comentario } = req.body;
+
+  const filme = new Filme({
+      nome,
+      genero,
+      ano,
+      imagem,
+      comentario,
+      julgamentos: []
+  });
 
   try {
-    await filme.save();
-    res.status(201).json(filme);
+      await filme.save();
+      console.log('Filme salvo com sucesso:', filme);
+      res.status(201).json(filme);
   } catch (error) {
-    res.status(400).json({ error: 'Erro ao adicionar filme' });
+      console.error('Erro ao salvar filme:', error);
+      res.status(400).json({ error: 'Erro ao adicionar filme' });
   }
 });
+
+
 
 /* app.post('/api/filmes', async (req, res) => {
   const { nome, genero, ano, julgamentos } = req.body; // Recebe os dados do filme

@@ -31,10 +31,10 @@ async function adicionarFilme(event) {
         const response = await fetch('/api/filmes', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json' // Envia os dados como JSON
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(filmeData) // Envia os dados convertidos para JSON
-        });
+            body: JSON.stringify(filmeData)
+        });        
 
         console.log("Resposta do servidor:", response);
 
