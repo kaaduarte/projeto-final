@@ -3,40 +3,30 @@ const API_BASE_URL = 'http://localhost:3000';
 
 // Função para adicionar um filme
 async function adicionarFilme(event) {
-    event.preventDefault();  // Previne o comportamento padrão de envio do formulário
+    event.preventDefault();
 
-    console.log("Função adicionarFilme foi chamada!"); // Mensagem para depuração
+    console.log("Função adicionarFilme foi chamada!");
 
-    // Coleta os dados do formulário
-    const nome = document.getElementById('nome').value;
-    const genero = document.getElementById('genero').value;
-    const ano = document.getElementById('ano').value;
-    const nota = document.getElementById('nota').value;
-    const imagem = document.getElementById('imagem').value; // Agora é uma URL, não um arquivo
-    const comentario = document.getElementById('comentario').value;
+    const nome = document.getElementById('nome')?.value || '';
+    const genero = document.getElementById('genero')?.value || '';
+    const ano = document.getElementById('ano')?.value || '';
+    const nota = document.getElementById('nota')?.value || '';
+    const imagem = document.getElementById('imagem')?.value || '';
 
-    console.log({ nome, genero, ano, nota, imagem }); // Verifica os valores coletados
+    if (!nome || !genero || !ano || !nota) {
+        console.error("Erro: Um ou mais campos estão vazios!");
+        document.getElementById('mensagem').innerHTML = `<p>Erro: Preencha todos os campos obrigatórios!</p>`;
+        return;
+    }
 
-    // Cria um objeto com os dados
-    const filmeData = {
-        nome,
-        genero,
-        ano,
-        nota,
-        imagem,  // A URL da imagem é agora um campo do tipo string
-        comentario,
-    };
+    const filmeData = { nome, genero, ano, nota, imagem };
 
     try {
         const response = await fetch('/api/filmes', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(filmeData)
-        });        
-
-        console.log("Resposta do servidor:", response);
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(filmeData),
+        });
 
         if (response.ok) {
             const filme = await response.json();
@@ -54,7 +44,13 @@ async function adicionarFilme(event) {
 }
 
 // Adiciona o evento de envio do formulário
-document.getElementById('form-adicionar-filme').addEventListener('submit', adicionarFilme);
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('form-adicionar-filme').addEventListener('submit', adicionarFilme);
+    console.log(document.getElementById('nome')); // Deve mostrar o elemento no console
+    console.log(document.getElementById('genero')); // Deve mostrar o elemento no console
+    console.log(document.getElementById('ano')); // Deve mostrar o elemento no console
+
+});
 
 function exibirFilmes(filmes) {
     const filmesLista = document.getElementById('filmes-lista');

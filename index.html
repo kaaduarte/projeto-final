@@ -15,27 +15,24 @@
     </div>
     <div class="main-content">
         <h2 id="adicionar-filme">Adicionar Filme</h2>
-        <form id="form-adicionar-filme" method="POST" action="http://localhost:3000/api/filmes">
-            <label for="nome">Nome do Filme:</label>
+        <form id="form-adicionar-filme">
+            <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" required>
         
-            <label for="genero-filme">Gênero:</label>
-            <input type="text" id="genero-filme" name="genero-filme" required>
+            <label for="genero">Gênero:</label>
+            <input type="text" id="genero" name="genero" required>
         
             <label for="ano">Ano:</label>
             <input type="number" id="ano" name="ano" required>
         
-            <label for="nota">Julgamento (0-5):</label>
-            <input type="number" id="nota" name="nota" min="0" max="5" step="0.1" required>
+            <label for="nota">Nota:</label>
+            <input type="number" id="nota" name="nota" required>
         
-            <label for="imagem">URL da Imagem do Filme:</label>
-            <input type="text" id="imagem" name="imagem" placeholder="Insira a URL da imagem" required>
-
-            <label for="comentario">Comentário:</label>
-            <textarea id="comentario" name="comentario"></textarea>
+            <label for="imagem">Imagem (URL):</label>
+            <input type="text" id="imagem" name="imagem">
         
             <button type="submit">Adicionar Filme</button>
-        </form>
+        </form>        
         
         <h2 id="buscar-filmes">Busque os Julgamentos</h2>
         <label for="genero-busca">Busque por Gênero:</label>
