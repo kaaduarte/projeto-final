@@ -19,9 +19,10 @@ const filmesSchema = new mongoose.Schema({
   ano: { type: Number, required: true },
   genero: { type: String, required: true },
   imagem: { type: String },
+  comentario: { type: String, trim: true }
   julgamentos: [{
       nota: { type: Number, min: 1, max: 5 },
-      comentario: { type: String }
+      comentario: { type: String, trim: true }
   }]
 });
 
@@ -29,9 +30,9 @@ const Filme = mongoose.model('Filme', filmesSchema);
 
 // Rota POST: Adicionar um filme (agora sem o upload de imagem)
 app.post('/api/filmes', async (req, res) => {
-  const { nome, genero, ano, imagem } = req.body; // Agora esperamos que a imagem seja uma URL
+  const { nome, genero, ano, imagem, comentario } = req.body; // Agora esperamos que a imagem seja uma URL
 
-  const filme = new Filme({ nome, genero, ano, imagem, julgamentos: [] });
+  const filme = new Filme({ nome, genero, ano, imagem, comentario, julgamentos: [] });
   
   try {
     await filme.save();
@@ -84,15 +85,12 @@ app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
-module.exports = Filme;
-
   // Função para calcular a média de julgamentos
   function calcularMedia(julgamentos) {
+    if (julgamentos.length === 0) return 0;
     const total = julgamentos.reduce((acc, curr) => acc + curr.nota, 0);
-    return (total / julgamentos.length).toFixed(1);
-  }
-
-module.exports = Filme;
+    return total / julgamentos.length;
+}
 
 // Rota para julgar um filme
 app.post('/api/filmes/:id/julgar', async (req, res) => {
@@ -108,15 +106,4 @@ app.post('/api/filmes/:id/julgar', async (req, res) => {
     res.status(201).json(filme);
 });
 
-// Rota para calcular a média das julgamentos
-app.get('/api/filmes/:id/julgamentos', async (req, res) => {
-  const { id } = req.params;
-
-  const filme = await Filme.findById(id);
-  if (!filme) return res.status(404).send('Filme não encontrado');
-
-  if (filme.julgamentos.length === 0) return res.status(200).json({ media: 'Sem avaliações' });
-
-  const media = filme.julgamentos.reduce((acc, curr) => acc + curr.nota, 0) / filme.julgamentos.length;
-  res.json({ media: media.toFixed(1) });
-});
+module.exports = Filme;

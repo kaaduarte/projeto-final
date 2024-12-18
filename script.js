@@ -13,6 +13,7 @@ async function adicionarFilme(event) {
     const ano = document.getElementById('ano').value;
     const nota = document.getElementById('nota').value;
     const imagem = document.getElementById('imagem').value; // Agora é uma URL, não um arquivo
+    const comentario = document.getElementById('comentario').value;
 
     console.log({ nome, genero, ano, nota, imagem }); // Verifica os valores coletados
 
@@ -22,7 +23,8 @@ async function adicionarFilme(event) {
         genero,
         ano,
         nota,
-        imagem  // A URL da imagem é agora um campo do tipo string
+        imagem,  // A URL da imagem é agora um campo do tipo string
+        comentario,
     };
 
     try {
@@ -61,12 +63,13 @@ function exibirFilmes(filmes) {
         const divFilme = document.createElement('div');
         divFilme.classList.add('filme');
         divFilme.innerHTML = `
-                <h3>${filme.nome} (${filme.ano})</h3>
-                <p>Gênero: ${filme.genero}</p>
-                ${filme.imagem ? `<img src="${filme.imagem}" alt="${filme.nome}" width="200" />` : ''}
-                <button onclick="julgarFilme('${filme._id}')">Julgar</button>
-                <p><strong>Média:</strong> ${calcularMedia(filme.julgamentos)}</p>
-                `;
+            <h3>${filme.nome} (${filme.ano})</h3>
+            <p>Gênero: ${filme.genero}</p>
+            ${filme.imagem ? `<img src="${filme.imagem}" alt="${filme.nome}" width="200" />` : ''}
+            ${filme.comentario ? `<p><strong>Comentário:</strong> ${filme.comentario}</p>` : ''}
+            <button onclick="julgarFilme('${filme._id}')">Julgar</button>
+            <p><strong>Média:</strong> ${calcularMedia(filme.julgamentos)}</p>
+        `;
         filmesLista.appendChild(divFilme);
     });
 }
